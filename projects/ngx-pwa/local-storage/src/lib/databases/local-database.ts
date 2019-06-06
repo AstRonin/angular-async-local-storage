@@ -13,6 +13,15 @@ export function localDatabaseFactory(platformId: Object, prefix: string | null) 
 
     if (isPlatformBrowser(platformId) && ('indexedDB' in window) && (indexedDB !== undefined) && (indexedDB !== null)) {
 
+      // Check user permissions on using indexedDB
+      let r = indexedDB.open('testStorage');
+      r.onsuccess = () => {
+        indexedDB.deleteDatabase('testStorage');
+      };
+      r.onerror = (e: any) => {
+        throw Error(e.target.error.message);
+      };
+
       /* Try with IndexedDB in modern browsers */
       return new IndexedDBDatabase(prefix);
 
